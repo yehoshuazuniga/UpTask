@@ -7,10 +7,10 @@
             "MVC\\" : "./",
             "Controllers\\" : "./controllers",
             "Model\\" : "./models",
-            "Classes\\" : "./clases"
+            "Classes\\" : "./classes"
         }
     },
     "require": {
-        "phpmailer/phpmailer": "^6.6"
+        "phpmailer/phpmailer": "^6.6" 
     }
 }
