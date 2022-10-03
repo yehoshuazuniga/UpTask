@@ -26,21 +26,23 @@ class LoginController
                     if (password_verify($_POST['password'], $usuario->password)) {
                         // iniciar sesion del usuario
                         session_start();
+
                         $_SESSION['id'] = $usuario->id;
+                        $_SESSION['login']=true;
                         $_SESSION['nombre'] = $usuario->nombre;
                         $_SESSION['email'] = $usuario->email;
 
                         //redireccionar 
-                        header('Location: /');
-                        debuguear($_SESSION);
+                        header('Location: /dashboard');
+                      //  debuguear($_SESSION);
                     } else {
                         Usuario::setAlerta('error', 'El passsword es incorrecto');
                     }
                 }
-                debuguear($usuario);
+                // debuguear($usuario);
             }
 
-            debuguear($auth);
+            // debuguear($auth);
         }
         $alertas = Usuario::getAlertas();
         //render a la vista
@@ -52,12 +54,9 @@ class LoginController
     public static function logout(Router $router)
     {
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        }
-
-        $router->render('auth/crear', [
-            'titulo' => 'Crear cuenta de Up Task'
-        ]);
+        session_start();
+        $_SESSION = [];
+        header('Location: /');
     }
     public static function crear(Router $router)
     {
