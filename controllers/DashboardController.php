@@ -11,8 +11,12 @@ class DashboardController
     {
         session_start();
         isAuth();
+        $id=$_SESSION['id'];
+
+        $proyectos = Proyecto::belongsTo('propietarioId', $id);
         $router->render('dashboard/index', [
             'titulo' => 'Proyectos',
+            'proyectos'=> $proyectos
         ]);
     }
 
@@ -27,21 +31,20 @@ class DashboardController
             //validacion 
             $alertas = $proyecto->validaProyecto();
 
-            if(empty($alertas)){
+            if (empty($alertas)) {
                 //generar url unica
                 $hash = md5(uniqid());
                 $proyecto->url = $hash;
 
                 //almacenar el creador del proyecto
                 $proyecto->propietarioId = $_SESSION['id'];
-
                 //guardar el proyecto
                 $proyecto->guardar();
-                debuguear($proyecto);
+                //
 
-                header('Location: /proyecto?id='.$proyecto->url);
+                header('Location: /proyecto?id=' . $proyecto->url);
             }
-            debuguear($proyecto);
+          //  debuguear($proyecto);
         }
 
         $router->render('dashboard/crear-proyecto', [
@@ -55,6 +58,22 @@ class DashboardController
         session_start();
         $router->render('dashboard/perfil', [
             'titulo' => 'Perfil'
+        ]);
+    }
+    public static function proyecto(Router $router)
+    {
+        session_start();
+        isAuth();
+
+        $token = $_GET['id'];
+ 
+        if (!$token) header('Location: /dashboard');
+        //revisar que la persna que visita eñ proyeto lo creo
+        $proyecto = Proyecto::where('url', $token);
+        if ($proyecto->propietarioId !== $_SESSION['id']) header('Location: /dashboard');
+
+        $router->render('dashboard/proyecto', [
+            'titulo' => $proyecto->proyecto
         ]);
     }
 }

@@ -28,13 +28,13 @@ class LoginController
                         session_start();
 
                         $_SESSION['id'] = $usuario->id;
-                        $_SESSION['login']=true;
+                        $_SESSION['login'] = true;
                         $_SESSION['nombre'] = $usuario->nombre;
                         $_SESSION['email'] = $usuario->email;
 
                         //redireccionar 
                         header('Location: /dashboard');
-                      //  debuguear($_SESSION);
+                        //  debuguear($_SESSION);
                     } else {
                         Usuario::setAlerta('error', 'El passsword es incorrecto');
                     }
@@ -62,31 +62,32 @@ class LoginController
     {
         $alertas = [];
         $usuario = new Usuario();
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $usuario->sincronizar($_POST);
             $alertas = $usuario->validarNuevaCuenta();
-
             if (empty($alertas)) {
                 $existeUsuario = Usuario::where('email', $usuario->email);
                 if ($existeUsuario) {
                     Usuario::setAlerta('error', 'El usuario ya existe');
                     $alertas = Usuario::getAlertas();
-                }
-            } else {
-                //crear nuevo usuario
-                $usuario->hashPassword();
-                //eliminar password 2
-                unset($usuario->password2);
-                //generar un token
-                $usuario->crearToken();
-                //hashear password
-                $resultado = $usuario->guardar();
-
-                $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
-                // debuguear($email);
-                $email->enviarConfirmacion();
-                if ($resultado) {
-                    header('Location: /mensaje');
+                } else {
+                    // 
+                    //crear nuevo usuario
+                    $usuario->hashPassword();
+                    //eliminar password 2
+                    unset($usuario->password2);
+                    //generar un token
+                    $usuario->crearToken();
+                    //hashear password
+                    $resultado = $usuario->guardar();
+                    //debuguear($usuario);
+                    $email = new Email($usuario->email, $usuario->nombre, $usuario->token);
+                    // debuguear($email);
+                    $email->enviarConfirmacion();
+                    if ($resultado) {
+                        header('Location: /mensaje');
+                    }
                 }
             }
         }
@@ -171,7 +172,7 @@ class LoginController
                     header('Location: /');
                 }
             }
-            debuguear($usuario);
+            //debuguear($usuario);
         }
 
         $alertas = Usuario::getAlertas();
