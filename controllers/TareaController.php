@@ -10,6 +10,19 @@ class TareaController
 
     public static function index()
     {
+        $proyectoId = $_GET['id'];
+
+        if (!$proyectoId) {
+            header('Location: /dashboard');
+        }
+        $proyecto = Proyecto::where('url', $proyectoId);
+        session_start();
+        if (!$proyecto || $proyecto->propietarioId !== $_SESSION['id']) {
+            header('Location: /404');
+        }
+
+       $tareas = Tarea::belongsTo('proyectoId', $proyecto->id);
+        echo json_encode(['tareas' => $tareas]);
     }
 
 
@@ -30,18 +43,18 @@ class TareaController
                 return;
             }
 
-        // todo bien instancias y crear la tarea
+            // todo bien instancias y crear la tarea
 
-        $tarea = new Tarea($_POST);
-        $tarea->proyectoId = $proyecto->id;
-        $resultado = $tarea->guardar();
-        $respuesta = [
-            'tipo'=>'exito',
-            'id'=>$resultado['id'],
-            'mensaje'=> 'Tarea creada correctamente'
-        ];
-        echo json_encode($respuesta);
-
+            $tarea = new Tarea($_POST);
+            $tarea->proyectoId = $proyecto->id;
+            $resultado = $tarea->guardar();
+            $respuesta = [
+                'tipo' => 'exito',
+                'id' => $resultado['id'],
+                'mensaje' => 'Tarea creada correctamente',
+                'proyectoId'=>$proyecto->id
+            ];
+            echo json_encode($respuesta);
         }
     }
 
