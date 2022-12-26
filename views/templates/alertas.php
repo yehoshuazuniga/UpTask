@@ -6,3 +6,4 @@ foreach ($alertas as $key => $error):
         <?php
     endforeach;
 endforeach;
+ 
