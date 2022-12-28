@@ -21,7 +21,7 @@ class TareaController
             header('Location: /404');
         }
 
-       $tareas = Tarea::belongsTo('proyectoId', $proyecto->id);
+        $tareas = Tarea::belongsTo('proyectoId', $proyecto->id);
         echo json_encode(['tareas' => $tareas]);
     }
 
@@ -52,7 +52,7 @@ class TareaController
                 'tipo' => 'exito',
                 'id' => $resultado['id'],
                 'mensaje' => 'Tarea creada correctamente',
-                'proyectoId'=>$proyecto->id
+                'proyectoId' => $proyecto->id
             ];
             echo json_encode($respuesta);
         }
@@ -62,6 +62,33 @@ class TareaController
     {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            //validar que el proyecto existe
+            $proyecto = Proyecto::where('url', $_POST['proyectoId']);
+            session_start();
+            if (!$proyecto || $proyecto->propietarioId !== $_SESSION['id']) {
+                $respuesta = [
+                    'tipo' => 'error',
+                    'mensaje' => 'Hubo un error al agregar la tarea'
+                ];
+                echo json_encode($respuesta);
+                return;
+            }
+
+            $tarea = new Tarea($_POST);
+            $tarea->proyectoId = $proyecto->id;
+            $resultado = $tarea->guardar();
+
+            if ($resultado) {
+                $respuesta = [
+                    'tipo' => 'exito',
+                    'id' => $tarea->id,
+                    'proyectoId' => $proyecto->id,
+                    'mensaje' => 'Actualizado correctamente'
+                ];
+                echo json_encode(['respuesta' => $respuesta]);
+            }
+
+            json_encode($_POST);
         }
     }
 
@@ -69,6 +96,27 @@ class TareaController
     {
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            //validar que el proyecto existe
+            $proyecto = Proyecto::where('url', $_POST['proyectoId']);
+            session_start();
+            if (!$proyecto || $proyecto->propietarioId !== $_SESSION['id']) {
+                $respuesta = [
+                    'tipo' => 'error',
+                    'mensaje' => 'Hubo un error al agregar la tarea'
+                ];
+                echo json_encode($respuesta);
+                return;
+            }
+
+            $tarea = new Tarea($_POST);
+            $resultado = $tarea->eliminar();
+            $resultado = [
+                'resultado'=>$resultado,
+                'mensaje' => 'Eliminado correctamente',
+                'tipo' => 'exito'
+
+            ];
+            echo json_encode($resultado);
         }
     }
 }
