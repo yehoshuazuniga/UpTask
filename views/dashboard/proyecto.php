@@ -4,20 +4,35 @@
         <button type="button" class="agregar-tarea" id="agregar-tarea">
             &#43; Nueva Tarea
         </button>
-        
     </div>
 
-    <ul id="listado-tareas"
-        class="listado-tareas">
-        
+    <div id="filtros" class="filtros">
+        <div class="filtros-inputs">
+            <h2>Filtros</h2>
+            <div class="campo">
+                <label for="todas">Todas las tareas</label>
+                <input type="radio" id="todas" name="filtro" value="" checked />
+            </div>
+            <div class="campo">
+                <label for="completadas">Tareas completadas</label>
+                <input type="radio" id="completadas" name="filtro" value="1" />
+            </div>
+            <div class="campo">
+                <label for="pendientes">Tareas pendientes</label>
+                <input type="radio" id="pendientes" name="filtro" value="0" />
+            </div>
+        </div>
+    </div>
+
+    <ul id="listado-tareas" class="listado-tareas">
+
     </ul>
 </div>
 <?php include_once __DIR__ . '/footer-dashboard.php'; ?>
 
-<?php   
-    $script = '
+<?php
+$script .= '
         <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script src = "build/js/tareas.js"></script>
-
     '
 ?>
